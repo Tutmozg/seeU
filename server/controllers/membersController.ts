@@ -368,15 +368,17 @@ class MembersController {
                 return res.status(404).json({ error: 'User not found' })
             }
             const group = await groupModel.findOne({ code: groupCode })
+            console.log(group)
             if (!group) {
                 return res.status(404).json({ error: 'Group not found' })
             }
             if (group.members.includes(user._id)) {
                 return res.status(400).json({ error: 'User already in group' })
             }
-            group.members.push(user._id)
-            await group.save()
             user.groups.push(group._id)
+            group.members.push(user._id)
+            await user.save()
+            await group.save()
             res.json({
                 message: 'User added to group successfully',
                 name: group.name,
